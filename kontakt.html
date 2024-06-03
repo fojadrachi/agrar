@@ -88,7 +88,10 @@
         footer a:hover {
             text-decoration: underline;
         }
-
+        .link-weiß {
+            color: white; /* Farbe des Links auf weiß setzen */
+            text-decoration: none; /* Unterstreichung entfernen */
+        }
         /* Media Queries for Responsive Design */
         @media (max-width: 768px) {
             .menu-toggle {
@@ -103,7 +106,7 @@
 </head>
 <body>
     <header>
-        <h1 href="index.html">Agrar Community</h1>
+        <h1><a class="link-weiß" href="index.html">Agrar Community</a></h1>
         <button class="menu-toggle" onclick="toggleMenu()">
             <div></div>
             <div></div>
