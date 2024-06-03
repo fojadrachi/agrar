@@ -72,7 +72,7 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             margin-bottom: 1rem;
         }
-        h2 {
+        h2, h4 {
             margin-top: 0;
         }
         ul {
@@ -108,6 +108,31 @@
             text-decoration: none; /* Unterstreichung entfernen */
         }
 
+        body {
+            transition: background-color 0.5s;
+        }
+        #colorPicker {
+            margin: 20px;
+        }
+        #cookieConsent {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #000;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            display: none;
+        }
+        #cookieConsent button {
+            background-color: #f1d600;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
         /* Media Queries for Responsive Design */
         @media (max-width: 768px) {
             .menu-toggle {
@@ -121,6 +146,11 @@
     </style>
 </head>
 <body>
+    <div id="cookieConsent">
+        Diese Website verwendet noch keine Cookies, aber du kannst aussuchen ob du annumst oder ablehnst.
+        <button id="acceptCookies">Akzeptieren</button>
+        <button id="declineCookies">Ablehnen</button>
+    </div>
     <header>
         <h1><a class="link-weiß" href="index.html">Agrar Community</a></h1>
         <button class="menu-toggle" onclick="toggleMenu()">
@@ -150,7 +180,7 @@
                 <li>Mod: es gibt keine mods auf dem server</li>
                 <!-- Weitere hochgeladene Mods -->
             </ul>
-            <h2>Ab und zu gibt es auch für einen tag einen anderen safegame auf dem dann XXL mais party gemacht wird</h2>
+            <h3>Ab und zu gibt es auch für einen tag eine andere map auf dem dann XXL mais party gemacht wird</h2>
             <ul>
                 <li>Map: Ostseeküste</li>
                 <li>alle auf dieser map benutzen mods sind crossplay und sind alle im spiel herrunterladbar</li>
@@ -170,6 +200,66 @@
         <a href="kontakt.html">Kontakt</a>
     </footer>
     <script>
+        function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                let date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        }
+
+        function getCookie(name) {
+            let nameEQ = name + "=";
+            let ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        function eraseCookie(name) {
+            document.cookie = name + '=; Max-Age=-99999999;';
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Prüfen, ob der Benutzer Cookies akzeptiert hat
+            if (!getCookie("cookiesAccepted")) {
+                document.getElementById("cookieConsent").style.display = "block";
+            } else {
+                let savedColor = getCookie("backgroundColor");
+                if (savedColor) {
+                    document.body.style.backgroundColor = savedColor;
+                    document.getElementById("colorPicker").value = savedColor;
+                }
+            }
+
+            document.getElementById("acceptCookies").addEventListener("click", function() {
+                setCookie("cookiesAccepted", "true", 365);
+                document.getElementById("cookieConsent").style.display = "none";
+
+                let savedColor = getCookie("backgroundColor");
+                if (savedColor) {
+                    document.body.style.backgroundColor = savedColor;
+                    document.getElementById("colorPicker").value = savedColor;
+                }
+            });
+
+            document.getElementById("declineCookies").addEventListener("click", function() {
+                document.getElementById("cookieConsent").style.display = "none";
+            });
+
+            document.getElementById("saveColor").addEventListener("click", function() {
+                let selectedColor = document.getElementById("colorPicker").value;
+                document.body.style.backgroundColor = selectedColor;
+                if (getCookie("cookiesAccepted")) {
+                    setCookie("backgroundColor", selectedColor, 365);
+                }
+            });
+        });
     </script>
 </body>
 </html>
