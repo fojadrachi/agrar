@@ -6,15 +6,37 @@
     <link rel="icon" type="image/jpg" href="websideicon.jpg">
     <title>Unser Team - Agrar Community</title>
     <style>
+        :root {
+            --bg-color: #f0f8ff;
+            --text-color: #000;
+            --header-bg-color: #228B22;
+            --header-text-color: #fff;
+            --box-bg-color: #fff;
+            --box-text-color: #000;
+            --link-color: #006400;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --header-bg-color: #1f1f1f;
+            --header-text-color: #ffffff;
+            --box-bg-color: #1e1e1e;
+            --box-text-color: #e0e0e0;
+            --link-color: #90ee90;
+        }
+
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f8ff;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             margin: 0;
             padding: 0;
+            transition: background-color 0.5s, color 0.5s;
         }
         header {
-            background-color: #228B22;
-            color: white;
+            background-color: var(--header-bg-color);
+            color: var(--header-text-color);
             text-align: center;
             padding: 1rem 0;
             position: relative;
@@ -30,24 +52,25 @@
             background-color: transparent;
             border: none;
             cursor: pointer;
+            z-index: 2;
         }
         .menu-toggle div {
             width: 25px;
             height: 3px;
-            background-color: white;
+            background-color: var(--header-text-color);
             margin: 4px 0;
         }
         nav {
             display: none;
             flex-direction: column;
-            background-color: #228B22;
+            background-color: var(--header-bg-color);
             position: absolute;
             top: 60px;
             right: 0;
             width: 200px;
         }
         nav a {
-            color: white;
+            color: var(--header-text-color);
             padding: 1rem;
             text-decoration: none;
             text-align: center;
@@ -60,7 +83,8 @@
             padding: 1rem;
         }
         .team {
-            background-color: #fff;
+            background-color: var(--box-bg-color);
+            color: var(--box-text-color);
             padding: 1rem;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -79,30 +103,62 @@
             margin: 0;
         }
         footer {
-            background-color: #228B22;
-            color: white;
+            background-color: var(--header-bg-color);
+            color: var(--header-text-color);
             text-align: center;
             padding: 1rem 0;
         }
         footer a {
-            color: white;
+            color: var(--header-text-color);
             text-decoration: none;
             margin: 0 1rem;
         }
         footer a:hover {
             text-decoration: underline;
         }
-        .name
-        {
-            color:#228B22
-        }
-        .link-gruen
-        {
-            color:#006400
-        }
         .link-weiß {
-            color: white; /* Farbe des Links auf weiß setzen */
-            text-decoration: none; /* Unterstreichung entfernen */
+            color: var(--header-text-color);
+            text-decoration: none;
+        }
+        .dark-mode-toggle {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: var(--header-bg-color);
+            border: 1px solid var(--header-text-color);
+            border-radius: 15px;
+            width: 40px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .dark-mode-toggle::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background-color: var(--header-text-color);
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        [data-theme="dark"] .dark-mode-toggle::before {
+            transform: translateX(20px);
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+            nav {
+                width: 100%;
+                display: none;
+            }
+            .dark-mode-toggle {
+                right: 50px;
+            }
         }
     </style>
 </head>
@@ -114,6 +170,7 @@
             <div></div>
             <div></div>
         </button>
+        <div class="dark-mode-toggle" onclick="toggleDarkMode()" id="darkModeToggle"></div>
     </header>
     <main>
         <div class="team">
@@ -152,6 +209,43 @@
         <a href="kontakt.html">Kontakt</a>
     </footer>
     <script>
+        function toggleMenu() {
+            const nav = document.querySelector('nav');
+            nav.style.display = nav.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                let date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        }
+
+        function getCookie(name) {
+            let nameEQ = name + "=";
+            let ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        function toggleDarkMode() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            setCookie('theme', newTheme, 365);
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const savedTheme = getCookie('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        });
     </script>
 </body>
 </html>
